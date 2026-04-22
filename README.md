@@ -1,4 +1,4 @@
-# JanBhasha 🇮🇳
+# JanBhasha
 ### *Bridging Government Communication, One Word at a Time*
 
 JanBhasha is an AI-powered English to Hindi translation tool built for Indian government organizations. It enables government websites to convert official content into Hindi, ensuring accessibility for all citizens.
