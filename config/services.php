@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | JanBhasha Translation Service
+    |--------------------------------------------------------------------------
+    */
+    'translation' => [
+        'provider'   => env('TRANSLATION_PROVIDER', 'google'),
+        'api_key'    => env('TRANSLATION_API_KEY', ''),
+        'libre_url'  => env('LIBRE_TRANSLATE_URL', 'https://libretranslate.com'),
+    ],
+
 ];
