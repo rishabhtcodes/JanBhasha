@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import api from '../api';
 import { MessageSquare, X, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export default function ContactWidget() {
-  const [open, setOpen] = useState(false);
+export default function ContactWidget({ isOpen, onToggle, onCloseOther }) {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', reason: '' });
   const [status, setStatus] = useState({ loading: false, success: false, error: '' });
+
+  const handleOpen = () => {
+    onCloseOther();
+    onToggle();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,22 +26,22 @@ export default function ContactWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-40">
-      {!open ? (
+      {!isOpen ? (
         <button
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-2xl shadow-indigo-500/30 hover:scale-105 transition-all font-semibold text-sm"
         >
           <MessageSquare className="w-5 h-5" />
-          <span>Support & Feedback</span>
+          <span>Support Chat</span>
         </button>
       ) : (
-        <div className="w-80 sm:w-96 glass-panel rounded-2xl p-5 shadow-2xl border border-slate-800 animate-slide-up">
+        <div className="w-80 sm:w-96 glass-panel rounded-2xl p-5 shadow-2xl border border-slate-800 animate-slide-up space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-indigo-400" />
               <h3 className="font-bold text-white text-base">Contact JanBhasha Team</h3>
             </div>
-            <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white p-1">
+            <button onClick={onToggle} className="text-slate-400 hover:text-white p-1">
               <X className="w-5 h-5" />
             </button>
           </div>
