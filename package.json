@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "concurrently -c \"#818cf8,#c084fc\" \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\" --names=backend,frontend",
-    "dev": "concurrently -c \"#818cf8,#c084fc\" \"cd backend && php artisan serve --port=8000\" \"cd frontend && npm run dev\" --names=backend,frontend",
-    "build": "npm --prefix frontend run build"
+    "start": "concurrently -c \"#818cf8,#c084fc\" \"cd backend && php artisan serve --port=8000\" \"cd frontend && npm run dev\" --names=\"Laravel-API,React-Vite\"",
+    "dev": "npm start",
+    "janbhasha": "npm start"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
