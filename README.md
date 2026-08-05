@@ -1,11 +1,31 @@
 # JanBhasha — जनभाषा
 ### *Bridging Government Communication, One Word at a Time*
 
-> 🚀 **Live Deployment:** [https://janbhasha.onrender.com](https://janbhasha.onrender.com)
+> 🚀 **Frontend (Vercel):** React + Vite SPA  
+> ⚡ **Backend (Render):** Laravel REST API Server  
+
+---
+
+## ⚡ Quick Start (Single Trigger Command)
+
+To run both the **Laravel Backend API** and the **React Frontend SPA** simultaneously with a single command:
+
+```bash
+# Option 1: Direct Batch Launcher
+start-janbhasha
+
+# Option 2: Shortcut Batch Launcher
+start
+
+# Option 3: NPM Shortcut
+npm dev
+```
 
 ---
 
 ## 📌 What is JanBhasha?
+
+
 
 **JanBhasha** (जनभाषा — "language of the people") is a **multi-tenant SaaS translation platform** built exclusively for **Indian government departments and organisations**. It solves a critical problem in India's Digital India mission: official communications, circulars, and documents are produced in English but must reach citizens in their regional languages.
 
