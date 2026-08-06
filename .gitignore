@@ -15,6 +15,8 @@ backend/vendor/
 frontend/dist/
 frontend/.vite/
 .vercel/
+**/coverage/
+**/.nyc_output/
 
 # Backend Storage & Cache
 backend/storage/*.key
@@ -32,13 +34,35 @@ backend/.phpunit.cache/
 # System & IDE files
 .DS_Store
 Thumbs.db
+desktop.ini
 *.log
 /.idea
 /.vscode
 /.fleet
 /.zed
+*.swp
+*.swo
 
 # Project Reports / Docs
 PROJECT_REPORT.md
 env.md
 future-fix.txt
+
+# Dev artifacts / snapshots
+snapshots/
+brain/
+
+# Docker overrides
+docker-compose.override.yml
+
+# Launcher scripts (local dev only)
+janbhasha.bat
+janbhasha.cmd
+start-janbhasha.bat
+start-janbhasha.ps1
+start.bat
+
+# Npm debug logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
