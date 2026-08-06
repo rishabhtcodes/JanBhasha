@@ -31,22 +31,22 @@ Route::prefix('auth')->group(function () {
 });
 
 // Public Demo Translation
-Route::post('/translations/demo', function (Request $request) {
+Route::post('/translations/demo', function (Request $request, \App\Services\TranslationService $service) {
     $request->validate([
         'text'        => 'required|string',
         'target_lang' => 'required|string',
+        'source_lang' => 'nullable|string',
     ]);
 
-    $translations = [
-        'hi' => 'जनभाषा में आपका स्वागत है। भारत के लिए निर्बाध बहुभाषी संकेतक एआई अनुवाद को सशक्त बनाना।',
-        'ta' => 'ஜன்பாஷாவிற்கு வரவேற்கிறோம். இந்தியாவிற்கான தடையற்ற பலமொழி AI மொழிபெயர்ப்பை வலுப்படுத்துகிறது.',
-        'te' => 'జనభాషాకు స్వాగతం. భారతదేశం కోసం బహుభాషా సూచిక AI అనువాదాన్ని సాధికారత చేయడం.',
-        'bn' => 'জনভাষায় আপনাকে স্বাগতম। ভারতের জন্য নির্বিঘ্ন বহুভাষিক এআই অনুবাদকে ক্ষমতায়িত করা।',
-        'mr' => 'जनभाषामध्ये आपले स्वागत आहे. भारतासाठी निर्बाध बहुभाषिक AI अनुवादाचे सबलीकरण.',
-        'gu' => 'જનભાષામાં આપનું સ્વાગત છે. ભારત માટે સીમલેસ મલ્ટી-લેંગ્વેજ AI અનુવાદને સક્ષમ બનાવવું.',
-    ];
-
-    $translatedText = $translations[$request->target_lang] ?? "[JanBhasha AI Output ({$request->target_lang})]: " . $request->text;
+    try {
+        $translatedText = $service->rawTranslate(
+            $request->text,
+            $request->input('source_lang', 'en'),
+            $request->target_lang
+        );
+    } catch (\Exception $e) {
+        $translatedText = "[Translation Error]: " . $e->getMessage();
+    }
 
     return response()->json([
         'status'          => 'success',
@@ -64,6 +64,23 @@ Route::post('/contact', function (Request $request) {
         'subject' => 'required|string|max:150',
         'reason'  => 'required|string|max:2000',
     ]);
+
+    try {
+        \Illuminate\Support\Facades\Mail::raw(
+            "New Support Inquiry Received:\n\n" .
+            "Name: {$validated['name']}\n" .
+            "Email: {$validated['email']}\n" .
+            "Subject: {$validated['subject']}\n" .
+            "Message:\n{$validated['reason']}",
+            function ($message) use ($validated) {
+                $message->to(config('mail.from.address', 'marketinghome672@gmail.com'))
+                        ->replyTo($validated['email'], $validated['name'])
+                        ->subject("JanBhasha Contact: " . $validated['subject']);
+            }
+        );
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error("SMTP email send failed: " . $e->getMessage());
+    }
 
     return response()->json(['status' => 'success', 'message' => 'Contact inquiry sent successfully']);
 });
@@ -136,21 +153,42 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Translation creation & history
-    Route::post('/translations', function (Request $request) {
+    Route::post('/translations', function (Request $request, \App\Services\TranslationService $service) {
         $validated = $request->validate([
             'source_text'     => 'required|string',
-            'source_language' => 'required|string',
+            'source_language' => 'nullable|string',
             'target_language' => 'required|string',
+            'source_lang'     => 'nullable|string',
+            'target_lang'     => 'nullable|string',
         ]);
 
-        $translated = "[JanBhasha Indic AI ({$validated['target_language']})]: " . $validated['source_text'];
+        $srcLang = $validated['source_language'] ?? $validated['source_lang'] ?? 'en';
+        $tgtLang = $validated['target_language'] ?? $validated['target_lang'] ?? 'hi';
+
+        try {
+            $translated = $service->rawTranslate(
+                $validated['source_text'],
+                $srcLang,
+                $tgtLang
+            );
+        } catch (\Exception $e) {
+            // Direct REST endpoint fallback
+            $url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" . urlencode($srcLang) . "&tl=" . urlencode($tgtLang) . "&dt=t&q=" . urlencode($validated['source_text']);
+            $res = @file_get_contents($url);
+            if ($res !== false) {
+                $json = json_decode($res, true);
+                $translated = $json[0][0][0] ?? "[JanBhasha AI ({$tgtLang})]: " . $validated['source_text'];
+            } else {
+                $translated = "[JanBhasha AI ({$tgtLang})]: " . $validated['source_text'];
+            }
+        }
 
         $item = Translation::create([
             'user_id'         => $request->user()->id ?? null,
             'source_text'     => $validated['source_text'],
             'translated_text' => $translated,
-            'source_language' => $validated['source_language'],
-            'target_language' => $validated['target_language'],
+            'source_language' => $srcLang,
+            'target_language' => $tgtLang,
             'character_count' => strlen($validated['source_text']),
             'status'          => 'completed',
         ]);
