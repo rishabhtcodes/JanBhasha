@@ -2,6 +2,7 @@ services:
   - type: web
     name: janbhasha
     runtime: docker
+    rootDir: backend
     dockerfilePath: ./Dockerfile
     branch: master
     plan: free
@@ -36,4 +37,21 @@ services:
       - key: QUEUE_CONNECTION
         value: sync
       - key: TRANSLATION_PROVIDER
-        value: mock
+        value: google
+      - key: TRANSLATION_API_KEY
+        value: AIzaSyAq-Ls2TiRV7j5cDAOwjoi1DRJX7_aQ7X0
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        value: marketinghome672@gmail.com
+      - key: MAIL_PASSWORD
+        value: eecrkgqvtvmvoits
+      - key: MAIL_FROM_ADDRESS
+        value: marketinghome672@gmail.com
+      - key: MAIL_FROM_NAME
+        value: JanBhasha
+
