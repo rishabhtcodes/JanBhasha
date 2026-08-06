@@ -218,45 +218,47 @@ export default function TranslationPage() {
       <div className="neu-card p-5 sm:p-7 space-y-5">
 
         {/* ── Language Selector Toolbar ── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-            {/* Source Language */}
-            <select
-              value={sourceLang}
-              onChange={(e) => setSourceLang(e.target.value)}
-              className={selectClass}
-            >
-              {LANGUAGES.map((l) => (
-                <option key={`src-${l.code}`} value={l.code}>{l.flag} {l.name}</option>
-              ))}
-            </select>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-slate-100">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              {/* Source Language */}
+              <select
+                value={sourceLang}
+                onChange={(e) => setSourceLang(e.target.value)}
+                className="neu-inset rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 px-3 sm:px-4 py-2.5 cursor-pointer flex-1 sm:min-w-[140px]"
+              >
+                {LANGUAGES.map((l) => (
+                  <option key={`src-${l.code}`} value={l.code}>{l.flag} {l.name}</option>
+                ))}
+              </select>
 
-            {/* Swap Button */}
-            <button
-              onClick={handleSwap}
-              className="neu-btn w-10 h-10 rounded-2xl flex items-center justify-center text-slate-500 hover:text-teal-600"
-              title="Swap languages"
-            >
-              <ArrowRightLeft className="w-4 h-4" />
-            </button>
+              {/* Swap Button */}
+              <button
+                onClick={handleSwap}
+                className="neu-btn w-10 h-10 rounded-2xl flex items-center justify-center text-slate-500 hover:text-teal-600 flex-shrink-0"
+                title="Swap languages"
+              >
+                <ArrowRightLeft className="w-4 h-4" />
+              </button>
 
-            {/* Target Language */}
-            <select
-              value={targetLang}
-              onChange={(e) => setTargetLang(e.target.value)}
-              className={`${selectClass} text-teal-700`}
-            >
-              {LANGUAGES.filter((l) => l.code !== sourceLang).map((l) => (
-                <option key={`tgt-${l.code}`} value={l.code}>{l.flag} {l.name}</option>
-              ))}
-            </select>
+              {/* Target Language */}
+              <select
+                value={targetLang}
+                onChange={(e) => setTargetLang(e.target.value)}
+                className="neu-inset rounded-2xl text-xs sm:text-sm font-semibold text-teal-700 px-3 sm:px-4 py-2.5 cursor-pointer flex-1 sm:min-w-[140px]"
+              >
+                {LANGUAGES.filter((l) => l.code !== sourceLang).map((l) => (
+                  <option key={`tgt-${l.code}`} value={l.code}>{l.flag} {l.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto pt-2 sm:pt-0">
             {/* File Upload Button */}
-            <label className="neu-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 cursor-pointer flex items-center gap-1.5 hover:text-teal-700">
-              <Upload className="w-3.5 h-3.5 text-teal-600" />
-              <span>{fileProcessing ? 'Parsing PDF...' : 'Upload PDF/Doc'}</span>
+            <label className="neu-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 cursor-pointer flex items-center gap-1.5 hover:text-teal-700 flex-1 sm:flex-initial justify-center">
+              <Upload className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
+              <span className="truncate">{fileProcessing ? 'Parsing PDF...' : 'Upload Document'}</span>
               <input type="file" accept=".txt,.pdf,.doc,.docx,image/*" onChange={handleFileUpload} className="hidden" />
             </label>
 
@@ -264,6 +266,7 @@ export default function TranslationPage() {
             <button
               onClick={() => { setSourceText(''); setTranslatedText(''); }}
               className="flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-rose-500 transition-colors p-2"
+              title="Clear text"
             >
               <RefreshCw className="w-3.5 h-3.5" />
             </button>
@@ -362,7 +365,7 @@ export default function TranslationPage() {
           <button
             onClick={() => handleTranslate()}
             disabled={loading || !sourceText.trim()}
-            className="px-8 py-3.5 text-white font-bold rounded-2xl flex items-center gap-2 btn-teal"
+            className="w-full sm:w-auto px-8 py-3.5 text-white font-bold rounded-2xl flex items-center justify-center gap-2 btn-teal"
           >
             <Sparkles className="w-5 h-5" />
             Translate Content
