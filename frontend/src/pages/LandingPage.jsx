@@ -56,10 +56,10 @@ export default function LandingPage({ onOpenAuth }) {
   };
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-12 sm:space-y-16 lg:space-y-20 pb-12 sm:pb-16 lg:pb-20">
 
       {/* ─── Hero Section ───────────────────────────────────────── */}
-      <section className="relative pt-12 lg:pt-20 overflow-hidden">
+      <section className="relative pt-8 sm:pt-12 lg:pt-20 overflow-hidden">
         {/* Soft background blobs */}
         <div className="absolute top-10 left-1/4 w-72 h-72 rounded-full opacity-25 blur-[80px] pointer-events-none"
              style={{ background: 'radial-gradient(circle, #99f6e4, transparent)' }} />
@@ -67,7 +67,7 @@ export default function LandingPage({ onOpenAuth }) {
              style={{ background: 'radial-gradient(circle, #c4b5fd, transparent)' }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
             {/* Left: Text */}
             <div className="flex-1 text-center lg:text-left">
@@ -105,9 +105,9 @@ export default function LandingPage({ onOpenAuth }) {
               </div>
             </div>
 
-            {/* Right: Holographic Orb */}
-            <div className="flex-shrink-0 flex flex-col items-center gap-6">
-              <div className="relative w-64 h-64 lg:w-72 lg:h-72 animate-float">
+            {/* Right: Holographic Orb — hidden on mobile to save space */}
+            <div className="hidden sm:flex flex-shrink-0 flex-col items-center gap-6">
+              <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 animate-float">
                 <div className="holographic-orb w-full h-full relative" />
                 <div className="absolute inset-5 rounded-full"
                      style={{ background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.85), rgba(255,255,255,0.05))' }} />
