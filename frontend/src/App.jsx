@@ -15,7 +15,16 @@ import AdminPage from './pages/AdminPage';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-amber-400">Loading JanBhasha...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-14 h-14 rounded-full neu-card flex items-center justify-center animate-float">
+          <span className="text-2xl">🌐</span>
+        </div>
+        <p className="text-slate-500 text-sm font-medium">Loading JanBhasha...</p>
+      </div>
+    </div>
+  );
   if (!user) return <Navigate to="/" replace />;
   if (adminOnly && user.role !== 'super_admin') return <Navigate to="/dashboard" replace />;
   return children;
@@ -33,7 +42,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col justify-between" style={{ background: '#e8ecf1' }}>
       <Navbar onOpenAuth={handleOpenAuth} />
 
       <main className="flex-1">
@@ -48,14 +57,12 @@ function MainApp() {
         </Routes>
       </main>
 
-      <footer className="glass-panel border-t border-slate-800/80 py-8 mt-16 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 JanBhasha (जनभाषा) — Multi-Tenant Indic SaaS Translation Platform.</p>
-          <div className="flex gap-4 font-semibold text-slate-400">
-            <span className="text-amber-400">Vercel React SPA</span>
-            <span>•</span>
-            <span className="text-emerald-400">Render Laravel REST API</span>
-          </div>
+      {/* Footer — compact pill layout */}
+      <footer className="py-4 mt-12 flex justify-center">
+        <div className="glass-panel px-6 py-2 rounded-full border border-white/70 shadow-sm text-center">
+          <p className="text-slate-400 text-[11px] font-medium">
+            © 2026 JanBhasha (जनभाषा) — Multi-Tenant Indic SaaS Translation Platform
+          </p>
         </div>
       </footer>
 
@@ -66,17 +73,19 @@ function MainApp() {
         setMode={setAuthMode}
       />
 
-      <NewsWidget
-        isOpen={newsOpen}
-        onToggle={() => setNewsOpen(!newsOpen)}
-        onCloseOther={() => setContactOpen(false)}
-      />
-
-      <ContactWidget
-        isOpen={contactOpen}
-        onToggle={() => setContactOpen(!contactOpen)}
-        onCloseOther={() => setNewsOpen(false)}
-      />
+      {/* Unified FAB Group — extreme bottom right corner */}
+      <div className="fixed bottom-4 right-4 z-40 flex flex-col-reverse items-end gap-2.5">
+        <ContactWidget
+          isOpen={contactOpen}
+          onOpen={() => { setContactOpen(true); setNewsOpen(false); }}
+          onClose={() => setContactOpen(false)}
+        />
+        <NewsWidget
+          isOpen={newsOpen}
+          onOpen={() => { setNewsOpen(true); setContactOpen(false); }}
+          onClose={() => setNewsOpen(false)}
+        />
+      </div>
     </div>
   );
 }

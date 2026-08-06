@@ -66,6 +66,36 @@ api.interceptors.response.use(
         }
       }
 
+      if (config.url.includes('/contact')) {
+        const data = JSON.parse(config.data || '{}');
+        // Dispatch real email via FormSubmit API to marketinghome672@gmail.com
+        try {
+          fetch('https://formsubmit.co/ajax/marketinghome672@gmail.com', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              _subject: `JanBhasha Contact: ${data.subject || 'Support Inquiry'}`,
+              name: data.name || 'Anonymous User',
+              email: data.email || 'user@janbhasha.in',
+              subject: data.subject || 'Inquiry',
+              message: data.reason || 'No message provided'
+            })
+          }).catch(e => console.warn('FormSubmit network notice:', e));
+        } catch (e) {
+          console.warn('Direct web mail dispatch error:', e);
+        }
+
+        return {
+          data: {
+            status: 'success',
+            message: 'Contact inquiry sent successfully',
+          },
+        };
+      }
+
       if (config.url.includes('/dashboard')) {
         return {
           data: {
