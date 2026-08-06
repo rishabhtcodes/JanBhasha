@@ -66,3 +66,4 @@ start.bat
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+.vercel
