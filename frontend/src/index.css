@@ -207,4 +207,36 @@ select {
   .glass-panel, .glass-card, .neu-card {
     border-radius: 16px;
   }
+
+  /* Larger tap targets on mobile */
+  button, select, input, label {
+    min-height: 40px;
+  }
+
+  /* Prevent overflow on small screens */
+  .neu-card {
+    overflow: hidden;
+  }
+
+  /* Card-based table rows for mobile */
+  .mobile-card-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(241,245,249,0.8);
+  }
+  .mobile-card-row:last-child { border-bottom: none; }
+
+  /* Show copy buttons always on touch devices */
+  .copy-btn-mobile {
+    opacity: 1 !important;
+  }
+}
+
+/* Touch device hover fix — always show copy buttons */
+@media (hover: none) {
+  .group:hover .opacity-0 {
+    opacity: 1;
+  }
 }
