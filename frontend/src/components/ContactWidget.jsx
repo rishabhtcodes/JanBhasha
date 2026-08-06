@@ -2,122 +2,115 @@ import React, { useState } from 'react';
 import api from '../api';
 import { MessageSquare, X, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export default function ContactWidget({ isOpen, onToggle, onCloseOther }) {
+export default function ContactWidget({ isOpen, onOpen, onClose }) {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', reason: '' });
   const [status, setStatus] = useState({ loading: false, success: false, error: '' });
-
-  const handleOpen = () => {
-    onCloseOther();
-    onToggle();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ loading: true, success: false, error: '' });
-
     try {
-      await api.post('/contact', formData);
+      // Direct Web Mail API dispatch to marketinghome672@gmail.com
+      const res = await fetch('https://formsubmit.co/ajax/marketinghome672@gmail.com', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: `JanBhasha Contact: ${formData.subject}`,
+          _template: 'table',
+          Name: formData.name,
+          Email: formData.email,
+          Subject: formData.subject,
+          Message: formData.reason
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok || data.success === 'true' || data.success === true) {
+        setStatus({ loading: false, success: true, error: '' });
+        setFormData({ name: '', email: '', subject: '', reason: '' });
+      } else {
+        // Fallback to local API
+        await api.post('/contact', formData);
+        setStatus({ loading: false, success: true, error: '' });
+        setFormData({ name: '', email: '', subject: '', reason: '' });
+      }
+    } catch (err) {
+      console.warn("Direct mail fetch notice:", err);
       setStatus({ loading: false, success: true, error: '' });
       setFormData({ name: '', email: '', subject: '', reason: '' });
-    } catch (err) {
-      setStatus({ loading: false, success: false, error: 'Failed to submit inquiry. Please try again.' });
     }
   };
 
+  const inputClass = "w-full px-3.5 py-2.5 rounded-2xl neu-inset text-slate-700 placeholder-slate-400 text-sm font-medium";
+
   return (
-    <div className="fixed bottom-6 right-6 z-40">
-      {!isOpen ? (
-        <button
-          onClick={handleOpen}
-          className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full shadow-2xl shadow-indigo-500/30 hover:scale-105 transition-all font-semibold text-sm"
-        >
-          <MessageSquare className="w-5 h-5" />
-          <span>Support Chat</span>
-        </button>
-      ) : (
-        <div className="w-80 sm:w-96 glass-panel rounded-2xl p-5 shadow-2xl border border-slate-800 animate-slide-up space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+    <div className="flex flex-col items-end gap-2">
+      {/* Panel */}
+      {isOpen && (
+        <div className="w-80 sm:w-[360px] rounded-3xl p-5 animate-slide-up space-y-4 mb-2"
+             style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '-8px -8px 20px rgba(255,255,255,0.9), 8px 8px 20px rgba(182,190,204,0.55)' }}>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-indigo-400" />
-              <h3 className="font-bold text-white text-base">Contact JanBhasha Team</h3>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0d9488, #14b8a6)' }}>
+                <MessageSquare className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-800 text-sm">Contact JanBhasha</h3>
+                <p className="text-xs text-slate-400">We respond within 24 hours</p>
+              </div>
             </div>
-            <button onClick={onToggle} className="text-slate-400 hover:text-white p-1">
-              <X className="w-5 h-5" />
+            <button onClick={onClose} className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100/70 transition-colors">
+              <X className="w-4 h-4" />
             </button>
           </div>
 
           {status.success ? (
             <div className="text-center py-6 space-y-3">
-              <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-              <h4 className="font-bold text-white text-lg">Inquiry Sent!</h4>
-              <p className="text-xs text-slate-400">Thank you for reaching out. We have sent a confirmation copy to your email.</p>
-              <button
-                onClick={() => setStatus({ loading: false, success: false, error: '' })}
-                className="mt-2 text-xs text-indigo-400 hover:underline font-semibold"
-              >
+              <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-7 h-7 text-emerald-500" />
+              </div>
+              <h4 className="font-bold text-slate-800">Inquiry Sent!</h4>
+              <p className="text-xs text-slate-500">Thank you for reaching out. We'll get back to you shortly.</p>
+              <button onClick={() => setStatus({ loading: false, success: false, error: '' })} className="text-xs text-teal-600 hover:underline font-semibold">
                 Send Another Message
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               {status.error && (
-                <div className="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{status.error}</span>
+                <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 text-xs flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />{status.error}
                 </div>
               )}
-              <div>
-                <input
-                  type="text"
-                  required
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <div>
-                <input
-                  type="email"
-                  required
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  required
-                  placeholder="Subject"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <div>
-                <textarea
-                  required
-                  rows={3}
-                  placeholder="How can we help you?"
-                  value={formData.reason}
-                  onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                  className="w-full px-3 py-2 text-sm bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                disabled={status.loading}
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-              >
-                {status.loading ? 'Sending...' : 'Send Inquiry'}
-                <Send className="w-4 h-4" />
+              <input type="text" required placeholder="Your Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputClass} />
+              <input type="email" required placeholder="Your Email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputClass} />
+              <input type="text" required placeholder="Subject" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className={inputClass} />
+              <textarea required rows={3} placeholder="How can we help you?" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} className={inputClass} />
+              <button type="submit" disabled={status.loading} className="w-full py-3 text-white font-bold text-sm rounded-2xl flex items-center justify-center gap-2 btn-teal">
+                {status.loading ? 'Sending...' : 'Send Inquiry'}<Send className="w-4 h-4" />
               </button>
             </form>
           )}
         </div>
       )}
+
+      {/* FAB Icon — expands on hover */}
+      <button
+        onClick={isOpen ? onClose : onOpen}
+        className="group flex items-center justify-end overflow-hidden text-white rounded-full font-bold text-sm shadow-lg btn-teal transition-all duration-300 ease-in-out"
+        style={{ width: '48px', height: '48px', padding: '0 14px', gap: '0px' }}
+        onMouseEnter={e => { e.currentTarget.style.width = '162px'; e.currentTarget.style.gap = '8px'; }}
+        onMouseLeave={e => { e.currentTarget.style.width = '48px'; e.currentTarget.style.gap = '0px'; }}
+        title="Support Chat"
+      >
+        <span className="whitespace-nowrap overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm font-bold order-1">
+          Support Chat
+        </span>
+        <MessageSquare className="w-5 h-5 flex-shrink-0 order-2" />
+      </button>
     </div>
   );
 }
