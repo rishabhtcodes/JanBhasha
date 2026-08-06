@@ -152,13 +152,13 @@ class TranslationService
      */
     private function callProvider(string $text, string $sourceLang, string $targetLang): string
     {
-        $provider = config('services.translation.provider', 'google');
+        $provider = config('services.translation.provider', 'mock');
 
         return match ($provider) {
             'google' => $this->googleProvider()->translate($text, $sourceLang, $targetLang),
             'libre'  => $this->libreProvider()->translate($text, $sourceLang, $targetLang),
             'mock'   => $this->freeGoogleProvider()->translate($text, $sourceLang, $targetLang),
-            default  => throw new RuntimeException("Unknown translation provider: {$provider}"),
+            default  => $this->freeGoogleProvider()->translate($text, $sourceLang, $targetLang),
         };
     }
 
